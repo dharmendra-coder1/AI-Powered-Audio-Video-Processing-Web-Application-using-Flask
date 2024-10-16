@@ -10,7 +10,6 @@ mysql-connector-python
 fpdf
 python-docx
 assemblyai
-smtplib
 werkzeug
 pydrive2
 tk
