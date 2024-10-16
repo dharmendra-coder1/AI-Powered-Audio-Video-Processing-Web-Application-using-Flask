@@ -5,7 +5,6 @@ speechrecognition
 pyttsx3
 moviepy
 cryptography
-PyDrive2
 mysql-connector-python
 fpdf
 python-docx
