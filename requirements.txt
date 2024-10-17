@@ -5,12 +5,11 @@ speechrecognition
 pyttsx3
 moviepy
 cryptography
-PyDrive2
+PyDrive
 mysql-connector-python
 fpdf
 python-docx
 assemblyai
-smtplib
 werkzeug
 pydrive2
 tk
