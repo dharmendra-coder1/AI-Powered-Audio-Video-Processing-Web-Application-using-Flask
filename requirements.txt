@@ -13,3 +13,4 @@ assemblyai
 werkzeug
 pydrive2
 tk
+pyaudio
