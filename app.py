@@ -27,14 +27,13 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 gauth = GoogleAuth()
 drive = GoogleDrive(gauth)
 
-# MySQL database connection (Updated with Render database details)
-
+# MySQL database connection
 def get_db_connection():
     return mysql.connector.connect(
-       host=os.getenv("DB_HOST"),
-       user=os.getenv("DB_USER"),
-       password=os.getenv("DB_PASS"),
-       database=os.getenv("DB_NAME")'
+        host='localhost',
+        user='root',
+        password='12345678',
+        database='speech_transcription_system'
     )
 
 def log_uploaded_file(task_type, file_name, file_path):
