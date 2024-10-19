@@ -29,12 +29,17 @@ drive = GoogleDrive(gauth)
 
 # MySQL database connection
 def get_db_connection():
-    return mysql.connector.connect(
-        host='DB_HOST',
-        user='DB_USER',
-        password='DB_PASS',
-        database='DB_NAME'
-    )
+    try:
+        conn = mysql.connector.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
+        )
+        return conn
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return None
 
 def log_uploaded_file(task_type, file_name, file_path):
     conn = get_db_connection()
