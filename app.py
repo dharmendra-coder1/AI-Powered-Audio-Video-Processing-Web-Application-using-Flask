@@ -28,13 +28,13 @@ gauth = GoogleAuth()
 drive = GoogleDrive(gauth)
 
 # MySQL database connection (Updated with Render database details)
-def get_db_connection():
-    return mysql.connector.connect(
-        host='dpg-cs9mf3o8fa8c73ccnt4g-a',  # Render database host
-        user='speech_transcription_system_user',  # Render database user
-        password='Cws2GK0Jd9Q8Gb7DxeQfa6nQsF0rCLmh',  # Render database password
-        database='speech_transcription_system'  # Render database name
-    )
+
+mydb = mysql.connector.connect(
+    host=os.getenv("DB_HOST"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASS"),
+    database=os.getenv("DB_NAME")
+)
 
 def log_uploaded_file(task_type, file_name, file_path):
     conn = get_db_connection()
