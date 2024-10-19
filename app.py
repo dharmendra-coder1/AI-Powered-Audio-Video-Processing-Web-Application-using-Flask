@@ -30,10 +30,10 @@ drive = GoogleDrive(gauth)
 # MySQL database connection
 def get_db_connection():
     return mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='12345678',
-        database='speech_transcription_system'
+        host='DB_HOST',
+        user='DB_USER',
+        password='DB_PASS',
+        database='DB_NAME'
     )
 
 def log_uploaded_file(task_type, file_name, file_path):
