@@ -40,9 +40,8 @@ from flask import request
 @app.route('/upload', methods=['POST'])
 def upload():
     file = request.files['file']
-    for chunk in iter(lambda: file.stream.read(1024 * 1024), b''):  # Read in 1MB chunks
-        # Process each chunk here
-    return 'File processed'
+    for chunk in iter(lambda: file.stream.read(1024 * 1024), b''):
+        return 'File processed'
 
 import psutil
 import os
