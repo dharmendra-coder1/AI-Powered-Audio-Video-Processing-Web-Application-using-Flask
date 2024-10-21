@@ -27,9 +27,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 gauth = GoogleAuth()
 drive = GoogleDrive(gauth)
 
-# MySQL database connection
-
-
 def process_file(file):
     chunk_size = 1024 * 1024  # 1MB chunks
     while True:
@@ -38,6 +35,24 @@ def process_file(file):
             break
         # Process the chunk
 
+from flask import request
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    file = request.files['file']
+    for chunk in iter(lambda: file.stream.read(1024 * 1024), b''):  # Read in 1MB chunks
+        # Process each chunk here
+    return 'File processed'
+
+import psutil
+import os
+
+def log_memory_usage():
+    process = psutil.Process(os.getpid())
+    print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")
+
+
+# MySQL database connection
 
 def get_db_connection():
     return mysql.connector.connect(
