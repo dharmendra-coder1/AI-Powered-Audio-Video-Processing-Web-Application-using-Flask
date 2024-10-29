@@ -15,4 +15,5 @@ werkzeug
 pydrive2
 tk
 pyaudio
+ffmpeg
 
