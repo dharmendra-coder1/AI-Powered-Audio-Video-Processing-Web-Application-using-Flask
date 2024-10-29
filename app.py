@@ -27,67 +27,42 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 gauth = GoogleAuth()
 drive = GoogleDrive(gauth)
 
-def process_file(file):
-    chunk_size = 1024 * 1024  # 1MB chunks
-    while True:
-        chunk = file.read(chunk_size)
-        if not chunk:
-            break
-        # Process the chunk
-
-from flask import request
-
-@app.route('/upload', methods=['POST'])
-def upload():
-    file = request.files['file']
-    for chunk in iter(lambda: file.stream.read(1024 * 1024), b''):
-        return 'File processed'
-
-import psutil
-import os
-
-def log_memory_usage():
-    process = psutil.Process(os.getpid())
-    print(f"Memory usage: {process.memory_info().rss / 1024 ** 2:.2f} MB")
-
-
 # MySQL database connection
 
-
 import mysql.connector
 import os
 
-# Define database connection parameters
-import mysql.connector
-import os
-
+# Adjusted database connection function with error handling
 def get_db_connection():
-    # Connect to the Railway MySQL database using environment variables
-    conn = mysql.connector.connect(
-        host=os.getenv("RAILWAY_PRIVATE_DOMAIN"),
-        user=os.getenv("MYSQLUSER", "root"),
-        password=os.getenv("MYSQL_ROOT_PASSWORD"),
-        database=os.getenv("MYSQL_DATABASE", "railway"),
-        port=int(os.getenv("MYSQLPORT", 3306))
-    )
-    return conn
+    try:
+        conn = mysql.connector.connect(
+            host=os.getenv("MYSQLHOST"),  # Ensuring host matches Railway's config
+            user=os.getenv("MYSQLUSER", "root"),
+            password=os.getenv("MYSQLPASSWORD"),
+            database=os.getenv("MYSQLDATABASE", "railway"),
+            port=int(os.getenv("MYSQLPORT", 3306))
+        )
+        return conn
+    except mysql.connector.Error as err:
+        print(f"Error: Could not connect to the database: {err}")
+        return None
 
 
 def log_uploaded_file(task_type, file_name, file_path):
-    # Get a database connection
     conn = get_db_connection()
-    cursor = conn.cursor()
-    
-    # Execute the INSERT query
-    cursor.execute(
-        "INSERT INTO uploaded_files (task_type, file_name, file_path) VALUES (%s, %s, %s)",
-        (task_type, file_name, file_path)
-    )
-    
-    # Commit the transaction and close the connection
-    conn.commit()
-    cursor.close()
-    conn.close()
+    if conn is not None:
+        try:
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO uploaded_files (task_type, file_name, file_path) VALUES (%s, %s, %s)",
+                (task_type, file_name, file_path)
+            )
+            conn.commit()
+        except mysql.connector.Error as err:
+            print(f"Error logging file: {err}")
+        finally:
+            cursor.close()
+            conn.close()
 
 
 @app.route('/')
