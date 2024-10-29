@@ -1,6 +1,12 @@
 # Use the official Python image from Docker Hub
 FROM python:3.11
 
+# Install required system dependencies
+RUN apt-get update && apt-get install -y \
+    espeak \
+    espeak-ng \
+    && rm -rf /var/lib/apt/lists/*
+
 # Set the working directory
 WORKDIR /app
 
