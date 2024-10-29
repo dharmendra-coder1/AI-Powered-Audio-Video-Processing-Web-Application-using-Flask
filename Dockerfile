@@ -5,6 +5,7 @@ FROM python:3.11
 RUN apt-get update && apt-get install -y \
     espeak \
     espeak-ng \
+    alsa-utils \  # Install alsa-utils for audio playback
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
@@ -18,6 +19,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of your application code to the container
 COPY . .
+
+# Set environment variables for espeak
+ENV AUDIO_OUTPUT=stdout  # Ensure espeak outputs audio to stdout
 
 # Set the command to run your application
 CMD ["gunicorn", "app:app", "--workers", "1", "--threads", "2", "--timeout", "120", "-b", "0.0.0.0:8080"]
