@@ -1,2 +1,2 @@
-[dependencies]
-apt = ["ffmpeg", "espeak"]
+[pkgs]
+runtime_pkgs = ["ffmpeg"]
