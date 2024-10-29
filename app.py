@@ -356,16 +356,21 @@ def upload_to_google_drive():
     file = request.files['file']
     if file.filename == '':
         return "No selected file"
+    
+    # Specify the folder ID of the shared folder
+    shared_folder_id = '12CFcFm5bWyzfFk1dlrF0OcXDw_lpwTIC'
+    
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(file_path)
     log_uploaded_file("Integration with Google Drive", file.filename, file_path)
 
-    # Use the authenticated drive instance
-    gdrive_file = drive.CreateFile({'title': file.filename})
+    # Use the authenticated drive instance to create and upload to the shared folder
+    gdrive_file = drive.CreateFile({'title': file.filename, 'parents': [{'id': shared_folder_id}]})
     gdrive_file.SetContentFile(file_path)
     gdrive_file.Upload()
 
     return f"File {file.filename} uploaded to Google Drive successfully."
+
 
 @app.route('/list-files', methods=['GET'])
 def list_files():
