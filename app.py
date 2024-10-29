@@ -15,6 +15,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from werkzeug.utils import secure_filename
+from oauth2client.service_account import ServiceAccountCredentials
 
 
 app = Flask(__name__)
@@ -24,10 +25,18 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Ensure upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Initialize Google Drive API
-gauth = GoogleAuth()
-drive = GoogleDrive(gauth)
+# Initialize Google Drive API with Service Account
+def authenticate_drive():
+    gauth = GoogleAuth()
+    scope = ['https://www.googleapis.com/auth/drive']
+    gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        '/path/to/your/service_account.json', scope
+    )
+    drive = GoogleDrive(gauth)
+    return drive
 
+# Use this authenticated drive instance
+drive = authenticate_drive()
 # MySQL database connection
 
 import mysql.connector
@@ -371,14 +380,12 @@ def upload_to_google_drive():
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(file_path)
     log_uploaded_file("Integration with Google Drive", file.filename, file_path)
-    
-    gauth.LocalWebserverAuth()
-    drive = GoogleDrive(gauth)
-    
+
+    # Use the authenticated drive instance
     gdrive_file = drive.CreateFile({'title': file.filename})
     gdrive_file.SetContentFile(file_path)
     gdrive_file.Upload()
-    
+
     return f"File {file.filename} uploaded to Google Drive successfully."
 
 if __name__ == '__main__':
