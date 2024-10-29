@@ -53,26 +53,42 @@ def log_memory_usage():
 
 # MySQL database connection
 
+
+import mysql.connector
+import os
+
+# Define database connection parameters
+import mysql.connector
+import os
+
 def get_db_connection():
-    return mysql.connector.connect(
-        host=os.getenv('DB_HOST'),
-        user=os.getenv('DB_USER'),
-        password=os.getenv('DB_PASSWORD'),
-        database=os.getenv('DB_NAME'),
-        port=os.getenv('DB_PORT')
+    # Connect to the Railway MySQL database using environment variables
+    conn = mysql.connector.connect(
+        host=os.getenv("RAILWAY_PRIVATE_DOMAIN"),
+        user=os.getenv("MYSQLUSER", "root"),
+        password=os.getenv("MYSQL_ROOT_PASSWORD"),
+        database=os.getenv("MYSQL_DATABASE", "railway"),
+        port=int(os.getenv("MYSQLPORT", 3306))
     )
+    return conn
 
 
 def log_uploaded_file(task_type, file_name, file_path):
+    # Get a database connection
     conn = get_db_connection()
     cursor = conn.cursor()
+    
+    # Execute the INSERT query
     cursor.execute(
         "INSERT INTO uploaded_files (task_type, file_name, file_path) VALUES (%s, %s, %s)",
         (task_type, file_name, file_path)
     )
+    
+    # Commit the transaction and close the connection
     conn.commit()
     cursor.close()
     conn.close()
+
 
 @app.route('/')
 def index():
