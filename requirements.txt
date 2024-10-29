@@ -16,4 +16,5 @@ pydrive2
 tk
 pyaudio
 ffmpeg
+gTTS
 
