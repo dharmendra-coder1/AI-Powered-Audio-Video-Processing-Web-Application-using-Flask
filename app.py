@@ -30,7 +30,7 @@ def authenticate_drive():
     gauth = GoogleAuth()
     scope = ['https://www.googleapis.com/auth/drive']
     gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name(
-        '/path/to/your/service_account.json', scope
+        'my-2nd-project-438807-d981994e5b71.json', scope
     )
     drive = GoogleDrive(gauth)
     return drive
