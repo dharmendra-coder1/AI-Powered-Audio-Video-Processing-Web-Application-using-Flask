@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     espeak \
     espeak-ng \
     alsa-utils \
+    portaudio19-dev \  # Install portaudio for PyAudio
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
