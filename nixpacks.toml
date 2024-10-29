@@ -1,8 +1,6 @@
-# nixpacks.toml
 [build]
-command = "pip install -r requirements.txt"
-
-[phases.setup]
-aptPackages = ["espeak"]
-
-[output]
+commands = [
+    "apt-get update",
+    "apt-get install -y espeak",
+    "pip install -r requirements.txt"
+]
