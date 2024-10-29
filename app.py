@@ -97,14 +97,15 @@ def speech_to_text():
 
 # Text-to-Speech
 # import pyttsx3
+from gtts import gTTS
+from flask import send_file
 
 @app.route('/text-to-speech', methods=['POST'])
 def text_to_speech():
     text = request.form['text']
-    engine = pyttsx3.init()
-    engine.save_to_file(text, 'output.mp3')
-    engine.runAndWait()
-    return send_file('output.mp3', as_attachment=True)
+    tts = gTTS(text=text, lang='en')
+    tts.save("output.mp3")
+    return send_file("output.mp3", as_attachment=True)
 
 
 
