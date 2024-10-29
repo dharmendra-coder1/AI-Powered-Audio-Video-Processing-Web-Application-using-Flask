@@ -24,8 +24,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Initialize Google Drive API
-gauth = GoogleAuth()
-drive = GoogleDrive(gauth)
+# gauth = GoogleAuth()
+# drive = GoogleDrive(gauth)
 
 # MySQL database connection
 
