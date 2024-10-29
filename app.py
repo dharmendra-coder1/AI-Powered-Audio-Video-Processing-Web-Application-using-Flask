@@ -15,6 +15,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from werkzeug.utils import secure_filename
+from oauth2client.service_account import ServiceAccountCredentials
+
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
