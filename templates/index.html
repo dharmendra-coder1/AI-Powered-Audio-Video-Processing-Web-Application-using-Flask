@@ -402,15 +402,36 @@
         </div>
     </div>
 
-   <!-- Uploaded Files Section -->
-        <div id="uploaded-files-section">
-            <h2>Uploaded Files</h2>
-            <ul id="uploaded-files-list">
-                {% for file in uploaded_files %}
-                <li>{{ file }}</li>
-                {% endfor %}
-            </ul>
-        </div>
+<!-- Uploaded Files Section -->
+<div id="uploaded-files-section">
+    <h2>Uploaded Files</h2>
+    <button id="list-files-btn">Load Files from Google Drive</button>
+    <ul id="uploaded-files-list">
+        {% for file in uploaded_files %}
+        <li>{{ file }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+    document.getElementById('list-files-btn').onclick = async () => {
+        const response = await fetch('/list-files');
+
+        if (response.ok) {
+            const files = await response.json();
+            const listElement = document.getElementById('uploaded-files-list');
+            listElement.innerHTML = ''; // Clear existing list
+
+            files.forEach(file => {
+                const listItem = document.createElement('li');
+                listItem.textContent = file.name; // Display file name
+                listElement.appendChild(listItem);
+            });
+        } else {
+            alert("Failed to load files.");
+        }
+    };
+</script>
 
     <footer>
         <p>&copy; 2024 Speech Transcription and Translation System</p>
