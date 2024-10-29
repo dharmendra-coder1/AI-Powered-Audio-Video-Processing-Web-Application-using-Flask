@@ -106,6 +106,17 @@ def text_to_speech():
     engine.runAndWait()
     return send_file('output.mp3', as_attachment=True)
 
+from gtts import gTTS
+from flask import send_file
+
+@app.route('/text-to-speech', methods=['POST'])
+def text_to_speech():
+    text = request.form['text']
+    tts = gTTS(text=text, lang='en')
+    tts.save("output.mp3")
+    return send_file("output.mp3", as_attachment=True)
+
+
 
 # 3. Automated Transcription
 @app.route('/automated-transcription', methods=['POST'])
