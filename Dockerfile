@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Set environment variables for espeak
-ENV AUDIO_OUTPUT=stdout  # Ensure espeak outputs audio to stdout
+ENV AUDIO_OUTPUT=stdout
 
 # Set the command to run your application
 CMD ["gunicorn", "app:app", "--workers", "1", "--threads", "2", "--timeout", "120", "-b", "0.0.0.0:8080"]
