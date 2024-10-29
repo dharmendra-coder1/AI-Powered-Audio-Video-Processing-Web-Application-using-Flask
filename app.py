@@ -371,13 +371,6 @@ def upload_to_google_drive():
 
     return f"File {file.filename} uploaded to Google Drive successfully."
 
-
-@app.route('/list-files', methods=['GET'])
-def list_files():
-    files = drive.ListFile({'q': "'root' in parents and trashed=false"}).GetList()
-    file_list = [{"id": file['id'], "name": file['title']} for file in files]
-    return jsonify(file_list)
-
 if __name__ == '__main__':
     app.run(debug=True)
 
