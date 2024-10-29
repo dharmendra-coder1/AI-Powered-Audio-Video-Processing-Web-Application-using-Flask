@@ -1,0 +1,17 @@
+# Use the official Python image from Docker Hub
+FROM python:3.11
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the requirements.txt file to the container
+COPY requirements.txt .
+
+# Install the dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of your application code to the container
+COPY . .
+
+# Set the command to run your application
+CMD ["gunicorn", "app:app", "--workers", "1", "--threads", "2", "--timeout", "120", "-b", "0.0.0.0:8080"]
