@@ -19,7 +19,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of your application code to the container
 COPY . .
-
 # Set environment variables for espeak
 ENV AUDIO_OUTPUT=stdout  # Ensure espeak outputs audio to stdout
 
