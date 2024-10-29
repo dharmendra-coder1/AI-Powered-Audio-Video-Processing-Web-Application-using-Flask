@@ -96,14 +96,17 @@ def speech_to_text():
         except sr.RequestError:
             return "Could not request results from Google Speech Recognition service"
 
-# 2. Text-to-Speech
+# Text-to-Speech
+# import pyttsx3
+
 @app.route('/text-to-speech', methods=['POST'])
 def text_to_speech():
     text = request.form['text']
     engine = pyttsx3.init()
-    engine.say(text)
+    engine.save_to_file(text, 'output.mp3')
     engine.runAndWait()
-    return "Speech has been synthesized successfully."
+    return send_file('output.mp3', as_attachment=True)
+
 
 # 3. Automated Transcription
 @app.route('/automated-transcription', methods=['POST'])
