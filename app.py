@@ -25,6 +25,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Initialize Google Drive API
 gauth = GoogleAuth()
+gauth.LocalWebserverAuth()
 drive = GoogleDrive(gauth)
 
 # MySQL database connection
@@ -362,18 +363,24 @@ def upload_to_google_drive():
     file = request.files['file']
     if file.filename == '':
         return "No selected file"
+    
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(file_path)
     log_uploaded_file("Integration with Google Drive", file.filename, file_path)
-    
-    gauth.LocalWebserverAuth()
-    drive = GoogleDrive(gauth)
-    
-    gdrive_file = drive.CreateFile({'title': file.filename})
-    gdrive_file.SetContentFile(file_path)
-    gdrive_file.Upload()
-    
-    return f"File {file.filename} uploaded to Google Drive successfully."
+
+    try:
+        gauth.LocalWebserverAuth()  # Local for testing
+        # gauth.CommandLineAuth()  # Use this for deployment
+        drive = GoogleDrive(gauth)
+
+        gdrive_file = drive.CreateFile({'title': file.filename})
+        gdrive_file.SetContentFile(file_path)
+        gdrive_file.Upload()
+        
+        return f"File {file.filename} uploaded to Google Drive successfully."
+    except Exception as e:
+        return f"An error occurred while uploading: {str(e)}"
+
 
 if __name__ == '__main__':
     app.run(debug=True)
