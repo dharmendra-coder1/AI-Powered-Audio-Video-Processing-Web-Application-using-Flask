@@ -144,27 +144,6 @@ def automated_transcription():
             return "API request error"
 
 # 4. Real-time Transcription
-@app.route('/real-time-transcription', methods=['POST'])
-def real_time_transcription():
-    def listen():
-        nonlocal text
-        recognizer = sr.Recognizer()
-        mic = sr.Microphone()
-        with mic as source:
-            recognizer.adjust_for_ambient_noise(source)
-            try:
-                audio = recognizer.listen(source, timeout=1, phrase_time_limit=20)
-                text = recognizer.recognize_google(audio)
-            except sr.UnknownValueError:
-                text = "Could not understand the audio"
-            except sr.RequestError:
-                text = "API request error"
-
-    text = ""
-    transcription_thread = threading.Thread(target=listen)
-    transcription_thread.start()
-    transcription_thread.join(timeout=40)  # Allow time for real-time transcription
-    return jsonify(text)
 
 # 5. Speaker Identification
 aai.settings.api_key = "608c1b16509240659f256854057b1962"  # Set AssemblyAI API Key
