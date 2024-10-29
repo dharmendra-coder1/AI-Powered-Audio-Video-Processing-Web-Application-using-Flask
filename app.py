@@ -357,23 +357,42 @@ def decrypt_data():
 
 
 # 12. Integration with Google Drive
+def authenticate_gdrive():
+    # Define the scope
+    scope = ['https://drive.google.com/drive/folders/12CFcFm5bWyzfFk1dlrF0OcXDw_lpwTIC?usp=sharing']
+
+    # Create credentials using the service account key file
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        'D:\python\Speech Transcription Updated\client_secrets.json', scope)
+
+    # Authorize PyDrive with the credentials
+    gauth = GoogleAuth()
+    gauth.credentials = credentials
+    
+    return GoogleDrive(gauth)
+
+# 12. Integration with Google Drive
 @app.route('/upload-to-drive', methods=['POST'])
 def upload_to_google_drive():
+    drive = authenticate_gdrive()
+    
     file = request.files['file']
     if file.filename == '':
-        return "No selected file"
+        return "No selected file", 400
+    
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(file_path)
     log_uploaded_file("Integration with Google Drive", file.filename, file_path)
-    
-    gauth.LocalWebserverAuth()
-    drive = GoogleDrive(gauth)
-    
-    gdrive_file = drive.CreateFile({'title': file.filename})
-    gdrive_file.SetContentFile(file_path)
-    gdrive_file.Upload()
-    
-    return f"File {file.filename} uploaded to Google Drive successfully."
+
+    file_drive = drive.CreateFile({'title': file.filename})
+    file_drive.SetContentFile(file_path)
+    file_drive.Upload()
+
+    os.remove(file_path)  # Optional: Remove the local file after uploading
+
+    return jsonify({'message': 'File uploaded successfully to Google Drive'}), 200
+
+
 
 
 if __name__ == '__main__':
