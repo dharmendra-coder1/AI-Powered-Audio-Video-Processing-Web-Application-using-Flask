@@ -197,8 +197,9 @@
     <div>
         <h2>Real-Time Transcription</h2>
         <p>Live transcription during meetings or conversations.</p>
-        
+
         <button id="start-btn" onclick="startRealTimeTranscription()">Start Real-Time Transcription</button>
+        <button id="stop-btn" onclick="stopRealTimeTranscription()" disabled>Stop</button>
         <br><br>
         <textarea id="real-time-transcription-output" rows="10" cols="50" placeholder="Transcription will appear here..." readonly></textarea>
         <p id="real-time-status" class="transcription-status hidden">Transcription in progress...</p>
@@ -206,21 +207,75 @@
 </div>
 
 <script>
+    let recognition;
+    let isRecording = false;
+    let fullTranscript = ""; // Keep full transcript here to retain between sessions
+
     function startRealTimeTranscription() {
         document.getElementById('real-time-status').classList.remove('hidden');
-        fetch('/real-time-transcription', {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
+        document.getElementById('start-btn').disabled = true;
+        document.getElementById('stop-btn').disabled = false;
+        isRecording = true;
+
+        // Check if Speech Recognition API is supported
+        if (!('webkitSpeechRecognition' in window)) {
+            alert("Sorry, your browser does not support Speech Recognition.");
+            return;
+        }
+
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        // Process results and append interim and final transcripts
+        recognition.onresult = (event) => {
+            let interimTranscript = "";
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    fullTranscript += event.results[i][0].transcript + " ";
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+            document.getElementById('real-time-transcription-output').value = fullTranscript + interimTranscript;
+        };
+
+        recognition.onerror = (event) => {
             document.getElementById('real-time-status').classList.add('hidden');
-            document.getElementById('real-time-transcription-output').value = data.transcription;
-        })
-        .catch(error => {
-            document.getElementById('real-time-transcription-output').value = 'Error during transcription: ' + error;
-        });
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('stop-btn').disabled = true;
+            if (event.error === 'network') {
+                document.getElementById('real-time-transcription-output').value = "Network error: Please check your internet connection.";
+            } else if (event.error === 'not-allowed') {
+                document.getElementById('real-time-transcription-output').value = "Microphone access denied. Please allow access to the microphone.";
+            } else {
+                document.getElementById('real-time-transcription-output').value = "Error during transcription: " + event.error;
+            }
+        };
+
+        recognition.onend = () => {
+            document.getElementById('real-time-status').classList.add('hidden');
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('stop-btn').disabled = true;
+            if (isRecording) {
+                recognition.start(); // Restart if stopped unexpectedly
+            }
+        };
+
+        recognition.start();
+    }
+
+    function stopRealTimeTranscription() {
+        isRecording = false;
+        recognition.stop();
+        document.getElementById('real-time-status').classList.add('hidden');
+        document.getElementById('start-btn').disabled = false;
+        document.getElementById('stop-btn').disabled = true;
     }
 </script>
+
+
 
 <!-- 5. Speaker Identification  -->
 
