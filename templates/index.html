@@ -387,34 +387,60 @@
 
 
 
-        <!-- Google Drive Integration -->
-        <div class="feature" id="google-drive-integration">
-            <i class="fas fa-cloud-upload-alt"></i>
-            <div>
-                <h2>Google Drive Integration</h2>
-                <form action="/upload-to-drive" method="post" enctype="multipart/form-data">
-                    <input type="file" name="file" required>
-                    <button type="submit">Upload to Google Drive</button>
-                </form>
-                <div id="google-drive-output"></div>
-            </div>
-        </div>
+       
+<!-- Google Drive Integration -->
+<div class="feature" id="google-drive-integration">
+    <i class="fas fa-cloud-upload-alt"></i>
+    <div>
+        <h2>Google Drive Integration</h2>
+        <form id="upload-form" action="/upload-to-drive" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <button type="submit">Upload to Google Drive</button>
+        </form>
+        <div id="google-drive-output"></div>
     </div>
+</div>
 
-    <footer>
-        <p>&copy; 2024 Speech Transcription and Translation System</p>
-    </footer>
+<!-- Added section to display uploaded files -->
+<div id="uploaded-files-section">
+    <h3>Uploaded Files:</h3>
+    <ul id="uploaded-files-list"></ul>
+</div>
 
-    <script>
-        function startRealTimeTranscription() {
-            document.getElementById('real-time-status').classList.remove('hidden');
-            fetch('/real-time-transcription', {
-                method: 'POST'
-            }).then(response => response.text()).then(data => {
-                document.getElementById('real-time-transcription-output').innerHTML = data;
-                document.getElementById('real-time-status').classList.add('hidden');
-            }).catch(error => console.error('Error:', error));
-        }
-    </script>
-</body>
-</html>
+<footer>
+    <p>&copy; 2024 Speech Transcription and Translation System</p>
+</footer>
+
+<script>
+    document.getElementById('upload-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(this);
+        fetch('/upload-to-drive', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message); // Log success message
+            fetchUploadedFiles(); // Fetch and display uploaded files
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    function fetchUploadedFiles() {
+        fetch('/list-files')
+            .then(response => response.json())
+            .then(files => {
+                const fileList = document.getElementById('uploaded-files-list');
+                fileList.innerHTML = ''; // Clear the current list
+                files.forEach(file => {
+                    const li = document.createElement('li');
+                    li.textContent = `${file.name} (ID: ${file.id})`;
+                    fileList.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error fetching files:', error));
+    }
+</script>
+
