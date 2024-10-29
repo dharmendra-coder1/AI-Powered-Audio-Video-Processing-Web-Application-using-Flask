@@ -1,11 +1,8 @@
 # nixpacks.toml
 [build]
-# Define how to install dependencies for your application
 command = "pip install -r requirements.txt"
 
 [phases.setup]
-# Install eSpeak as a package
 aptPackages = ["espeak"]
 
 [output]
-# This section can include any output settings you might have
