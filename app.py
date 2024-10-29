@@ -359,7 +359,7 @@ def decrypt_data():
 # 12. Integration with Google Drive
 def authenticate_gdrive():
     # Define the scope
-    scope = ['https://drive.google.com/drive/folders/12CFcFm5bWyzfFk1dlrF0OcXDw_lpwTIC?usp=sharing']
+    scope = ['https://www.googleapis.com/auth/drive.file']
 
     # Create credentials using the service account key file
     credentials = ServiceAccountCredentials.from_json_keyfile_name(
