@@ -5,7 +5,7 @@ FROM python:3.11
 RUN apt-get update && apt-get install -y \
     espeak \
     espeak-ng \
-    alsa-utils \  # Install alsa-utils for aplay command
+    alsa-utils \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
