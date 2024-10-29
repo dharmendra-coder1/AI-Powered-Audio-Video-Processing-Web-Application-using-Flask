@@ -129,17 +129,48 @@
 
 
         <!-- Text-to-Speech -->
-        <div class="feature" id="text-to-speech">
-            <i class="fas fa-volume-up"></i>
-            <div>
-                <h2>Text-to-Speech</h2>
-                <form action="/text-to-speech" method="post">
-                    <textarea name="text" placeholder="Enter text here..." required></textarea>
-                    <button type="submit">Convert Text to Speech</button>
-                </form>
-                <div id="text-to-speech-output"></div>
-            </div>
+      <!-- Text-to-Speech -->
+<div class="feature" id="text-to-speech">
+    <i class="fas fa-volume-up"></i>
+    <div>
+        <h2>Text-to-Speech</h2>
+        <form id="textToSpeechForm" action="/text-to-speech" method="post">
+            <textarea name="text" placeholder="Enter text here..." required></textarea>
+            <button type="submit">Convert Text to Speech</button>
+        </form>
+        <!-- Audio output -->
+        <div id="text-to-speech-output">
+            <audio id="audioPlayer" controls style="display: none;"></audio>
         </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('textToSpeechForm').onsubmit = async (e) => {
+        e.preventDefault(); // Prevents the form from submitting the default way
+
+        const formData = new FormData(e.target);
+        const response = await fetch('/text-to-speech', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            // Convert the response to a Blob and create a URL for it
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            // Get the audio player and set the source to the blob URL
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.style.display = 'block'; // Make the player visible
+            audioPlayer.src = url;
+            audioPlayer.play(); // Automatically play the audio
+        } else {
+            alert("Failed to generate speech.");
+        }
+    };
+</script>
+
 
        <!-- Automated Transcription -->
 <div class="feature" id="automated-transcription">
