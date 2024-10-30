@@ -50,6 +50,8 @@ def get_db_connection():
             host=os.getenv("MYSQLHOST"),  # Ensuring host matches Railway's config
             user=os.getenv("MYSQLUSER", "root"),
             password=os.getenv("MYSQLPASSWORD"),
+            private_url=os.getenv("DATABASEURL"),
+            public_url=os.getenv("DATABASE_URL"),
             database=os.getenv("MYSQLDATABASE", "railway"),
             port=int(os.getenv("MYSQLPORT", 3306))
         )
