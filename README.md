@@ -1,8 +1,5 @@
 Project Title: Speech Transcription and Processing System
 
-## Deployed Application URL
-Access the deployed application at: [Transcription System](https://transcription-dharmendra-prajapati.up.railway.app/)
-
 ## Overview
 This project is a comprehensive audio transcription and translation system that provides various features such as speech-to-text conversion, text-to-speech, real-time transcription, speaker identification, and collaboration tools. It leverages advanced technologies to enhance user experience and facilitate audio and video integration.
 
@@ -29,46 +26,9 @@ This project is a comprehensive audio transcription and translation system that 
 - **Text-to-Speech**: `pyttsx3`, `gTTS`
 - **Audio Processing**: `moviepy`, `pyaudio`
 - **File Handling**: `docx`, `fpdf`, `python-docx`
-- **Deployment**: Railway, Nixpacks
 - **Collaboration and File Management**: PyDrive, Google Drive API
-
-## Deployment on Railway
-
-1. **Create Railway Project**:
-   - Sign up at [Railway](https://railway.app/) and create a new project.
-   
-2. **Set Up Environment Variables**:
-   - Add the necessary environment variables for Google API credentials, including:
-     - `GOOGLE_APPLICATION_CREDENTIALS`: Path to your service account JSON file.
-     - Other environment variables as needed for your application.
-
-3. **Configure Nixpacks**:
-   - Create a `nixpacks.toml` file in your project directory with the following content:
-     ```toml
-     [pkgs]
-     runtime_pkgs = ["ffmpeg"]
-     ```
-
-4. **Create railway.json**:
-   - Create a `railway.json` file with the following configuration:
-     ```json
-     {
-       "$schema": "https://railway.app/railway.schema.json",
-       "build": {
-         "builder": "NIXPACKS"
-       },
-       "deploy": {
-         "runtime": "V2",
-         "numReplicas": 1,
-         "startCommand": "gunicorn app:app --workers 1 --threads 2 --timeout 120",
-         "sleepApplication": false,
-         "restartPolicyType": "ON_FAILURE",
-         "restartPolicyMaxRetries": 10
-       }
-     }
-     ```
-
-5. **Set Up Requirements**:
+  
+  **Set Up Requirements**:
    - Create a `requirements.txt` file and include all the necessary dependencies:
      ```
      gunicorn==21.2.0
@@ -91,9 +51,6 @@ This project is a comprehensive audio transcription and translation system that 
      ffmpeg
      gTTS
      ```
-
-6. **Deploy the Application**:
-   - Push your code to the Railway project repository, and it will automatically deploy your application.
 
 ## Creating JSON Files for Google API
 
