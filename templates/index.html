@@ -106,196 +106,80 @@
         <h1>Speech Transcription and Translation System</h1>
     </header>
     <div class="container">
-       
-<!-- Speech-to-Text Converter -->
-<div class="feature" id="speech-to-text">
-    <i class="fas fa-microphone"></i>
-    <div>
-        <h2>Speech-to-Text Converter</h2>
-        <form action="/speech-to-text" method="post" enctype="multipart/form-data">
-            <input type="file" name="audio" accept="audio/*" required>
-            <button type="submit">Convert Speech to Text</button>
-        </form>
-        <!-- Display transcription result -->
-        <div id="speech-to-text-output">
-            {% if speech_to_text_output %}
-                <h3>Transcription:</h3>
-                <textarea readonly rows="10" cols="50">{{ speech_to_text_output }}</textarea>
-            {% endif %}
+
+        <!-- Speech-to-Text Converter -->
+        <div class="feature" id="speech-to-text">
+            <i class="fas fa-microphone"></i>
+            <div>
+                <h2>Speech-to-Text Converter</h2>
+                <form action="/speech-to-text" method="post" enctype="multipart/form-data">
+                    <input type="file" name="audio" accept="audio/*" required>
+                    <button type="submit">Convert Speech to Text</button>
+                </form>
+                <div id="speech-to-text-output">
+                    {% if speech_to_text_output %}
+                        <h3>Transcription:</h3>
+                        <textarea readonly rows="10" cols="50">{{ speech_to_text_output }}</textarea>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-
-
 
         <!-- Text-to-Speech -->
-      <!-- Text-to-Speech -->
-<div class="feature" id="text-to-speech">
-    <i class="fas fa-volume-up"></i>
-    <div>
-        <h2>Text-to-Speech</h2>
-        <form id="textToSpeechForm" action="/text-to-speech" method="post">
-            <textarea name="text" placeholder="Enter text here..." required></textarea>
-            <button type="submit">Convert Text to Speech</button>
-        </form>
-        <!-- Audio output -->
-        <div id="text-to-speech-output">
-            <audio id="audioPlayer" controls style="display: none;"></audio>
+        <div class="feature" id="text-to-speech">
+            <i class="fas fa-volume-up"></i>
+            <div>
+                <h2>Text-to-Speech</h2>
+                <form action="/text-to-speech" method="post">
+                    <textarea name="text" placeholder="Enter text here..." required></textarea>
+                    <button type="submit">Convert Text to Speech</button>
+                </form>
+            </div>
         </div>
+
+        <!-- Real-Time Transcription -->
+        <div class="feature" id="real-time-transcription">
+  <i class="fas fa-clock"></i>
+  <div>
+    <h2>🎤 Real-Time Transcription</h2>
+    <p id="state">idle</p>
+
+    <textarea name="text" id="transcript" contenteditable="false"
+      aria-label="Live transcript" placeholder="Live transcription will appear here..."
+      required></textarea>
+
+    <label for="lang">Language:</label>
+    <select id="lang">
+      <option value="en-US">English (US)</option>
+      <option value="en-GB">English (UK)</option>
+      <option value="hi-IN">Hindi (India)</option>
+      <option value="es-ES">Spanish</option>
+    </select>
+
+    <div style="margin-top:10px;">
+      <button id="startBtn">Start</button>
+      <button id="stopBtn" disabled>Stop</button>
+      <button id="clearBtn">Clear</button>
     </div>
+  </div>
 </div>
 
-<script>
-    document.getElementById('textToSpeechForm').onsubmit = async (e) => {
-        e.preventDefault(); // Prevents the form from submitting the default way
-
-        const formData = new FormData(e.target);
-        const response = await fetch('/text-to-speech', {
-            method: 'POST',
-            body: formData
-        });
-
-        if (response.ok) {
-            // Convert the response to a Blob and create a URL for it
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-
-            // Get the audio player and set the source to the blob URL
-            const audioPlayer = document.getElementById('audioPlayer');
-            audioPlayer.style.display = 'block'; // Make the player visible
-            audioPlayer.src = url;
-            audioPlayer.play(); // Automatically play the audio
-        } else {
-            alert("Failed to generate speech.");
-        }
-    };
-</script>
-
-
-       <!-- Automated Transcription -->
-<div class="feature" id="automated-transcription">
-    <i class="fas fa-file-alt"></i>
-    <div>
-        <h2>Automated Transcription</h2>
-        <form action="/automated-transcription" method="post" enctype="multipart/form-data">
-            <input type="file" name="audio" accept="audio/*" required>
-            <button type="submit">Get Automated Transcription</button>
-        </form>
-        <!-- Display transcription result -->
-        <div id="automated-transcription-output">
-            {% if automated_transcription_output %}
-            <textarea readonly rows="10" cols="50"> {{ automated_transcription_output }}</textarea>
-            {% endif %}
+        <!-- Speaker Identification -->
+        <div class="feature" id="speaker-identification">
+            <i class="fas fa-users"></i>
+            <div>
+                <h2>Speaker Identification</h2>
+                <form action="/speaker-identification" method="post" enctype="multipart/form-data">
+                    <input type="file" name="audio" accept="audio/*" required>
+                    <button type="submit">Identify Speakers</button>
+                </form>
+                <div id="speaker-identification-output">
+                    {% if speaker_identification_output %}
+                        <textarea readonly rows="10" cols="50">{{ speaker_identification_output }}</textarea>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-
-
-<!-- Real-Time Transcription -->
-<div class="feature" id="real-time-transcription">
-    <i class="fas fa-clock"></i>
-    <div>
-        <h2>Real-Time Transcription</h2>
-        <p>Live transcription during meetings or conversations.</p>
-
-        <button id="start-btn" onclick="startRealTimeTranscription()">Start Real-Time Transcription</button>
-        <button id="stop-btn" onclick="stopRealTimeTranscription()" disabled>Stop</button>
-        <br><br>
-        <textarea id="real-time-transcription-output" rows="10" cols="50" placeholder="Transcription will appear here..." readonly></textarea>
-        <p id="real-time-status" class="transcription-status hidden">Transcription in progress...</p>
-    </div>
-</div>
-
-<script>
-    let recognition;
-    let isRecording = false;
-    let fullTranscript = ""; // Keep full transcript here to retain between sessions
-
-    function startRealTimeTranscription() {
-        document.getElementById('real-time-status').classList.remove('hidden');
-        document.getElementById('start-btn').disabled = true;
-        document.getElementById('stop-btn').disabled = false;
-        isRecording = true;
-
-        // Check if Speech Recognition API is supported
-        if (!('webkitSpeechRecognition' in window)) {
-            alert("Sorry, your browser does not support Speech Recognition.");
-            return;
-        }
-
-        recognition = new webkitSpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
-
-        // Process results and append interim and final transcripts
-        recognition.onresult = (event) => {
-            let interimTranscript = "";
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    fullTranscript += event.results[i][0].transcript + " ";
-                } else {
-                    interimTranscript += event.results[i][0].transcript;
-                }
-            }
-            document.getElementById('real-time-transcription-output').value = fullTranscript + interimTranscript;
-        };
-
-        recognition.onerror = (event) => {
-            document.getElementById('real-time-status').classList.add('hidden');
-            document.getElementById('start-btn').disabled = false;
-            document.getElementById('stop-btn').disabled = true;
-            if (event.error === 'network') {
-                document.getElementById('real-time-transcription-output').value = "Network error: Please check your internet connection.";
-            } else if (event.error === 'not-allowed') {
-                document.getElementById('real-time-transcription-output').value = "Microphone access denied. Please allow access to the microphone.";
-            } else {
-                document.getElementById('real-time-transcription-output').value = "Error during transcription: " + event.error;
-            }
-        };
-
-        recognition.onend = () => {
-            document.getElementById('real-time-status').classList.add('hidden');
-            document.getElementById('start-btn').disabled = false;
-            document.getElementById('stop-btn').disabled = true;
-            if (isRecording) {
-                recognition.start(); // Restart if stopped unexpectedly
-            }
-        };
-
-        recognition.start();
-    }
-
-    function stopRealTimeTranscription() {
-        isRecording = false;
-        recognition.stop();
-        document.getElementById('real-time-status').classList.add('hidden');
-        document.getElementById('start-btn').disabled = false;
-        document.getElementById('stop-btn').disabled = true;
-    }
-</script>
-
-
-
-<!-- 5. Speaker Identification  -->
-
-<div class="feature" id="speaker-identification">
-    <i class="fas fa-users"></i>
-    <div>
-        <h2>Speaker Identification</h2>
-        <form action="/speaker-identification" method="post" enctype="multipart/form-data">
-            <input type="file" name="audio" accept="audio/*" required>
-            <button type="submit">Identify Speakers</button>
-        </form>
-        
-        <div id="speaker-identification-output">
-            {% if speaker_identification_output %}
-            <textarea readonly rows="10" cols="50">{{ speaker_identification_output }}</textarea>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
 
         <!-- Audio & Video Integration -->
         <div class="feature" id="audio-video-integration">
@@ -303,147 +187,106 @@
             <div>
                 <h2>Audio & Video Integration</h2>
                 <form action="/audio-video-integration" method="post" enctype="multipart/form-data">
-                    <input type="file" name="media" accept="audio/,video/" required>
-                    <button type="submit">Import</button>
+                    <input type="file" name="media" accept="video/*" required>
+                    <button type="submit">Convert Video to Audio</button>
                 </form>
-                <div id="audio-video-integration-output"></div>
             </div>
         </div>
 
-    <!-- Search and Indexing with Text File Upload -->
-    <div class="feature" id="search-indexing">
-        <i class="fas fa-search"></i>
-        <div>
-            <h2>Search and Indexing</h2>
-            <form action="/search-indexing" method="post" enctype="multipart/form-data">
-                <textarea name="search-query" placeholder="Enter search query..." required></textarea>
-                <label for="file-upload">Upload a .txt file:</label>
-                <input type="file" name="file" id="file-upload" accept=".txt" required>
-                <button type="submit">Search Transcripts</button>
-            </form>
-            <div id="search-indexing-output">
-                {% if search_result %}
-                    <p>{{ search_result }}</p>
+        <!-- Search and Indexing -->
+        <div class="feature" id="search-indexing">
+            <i class="fas fa-search"></i>
+            <div>
+                <h2>Search and Indexing</h2>
+                <form action="/search-indexing" method="post" enctype="multipart/form-data">
+                    <textarea name="search-query" placeholder="Enter search query..." required></textarea>
+                    <label for="file-upload">Upload a .txt file:</label>
+                    <input type="file" name="file" id="file-upload" accept=".txt" required>
+                    <button type="submit">Search Transcripts</button>
+                </form>
+                <div id="search-indexing-output">
+                    {% if search_result %}
+                        <p>{{ search_result }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Editing Tools -->
+        <div class="feature" id="editing-tools">
+            <i class="fas fa-edit"></i>
+            <div>
+                <h2>Editing Tools</h2>
+                <form action="/editing-tools" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file" accept=".txt" required>
+                    <button type="submit">Upload File</button>
+                </form>
+                {% if file_content %}
+                    <form action="/save-edited-text" method="post">
+                        <textarea name="edited_text" rows="10" cols="50">{{ file_content }}</textarea>
+                        <input type="hidden" name="file_name" value="{{ file_name }}">
+                        <button type="submit">Save Changes</button>
+                    </form>
+                {% endif %}
+                {% if success_message %}
+                    <p style="color: green;">{{ success_message }}</p>
                 {% endif %}
             </div>
         </div>
-    </div>
-
-
-       <!-- Editing Tools -->
-<div class="feature" id="editing-tools">
-    <i class="fas fa-edit"></i>
-    <div>
-        <h2>Editing Tools</h2>
-        <!-- Form for file upload -->
-        <form action="/editing-tools" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".txt" required>
-            <button type="submit">Upload File</button>
-        </form>
-
-        <!-- Editable Text Area for file content -->
-        {% if file_content %}
-            <form action="/save-edited-text" method="post">
-                <textarea name="edited_text" rows="10" cols="50">{{ file_content }}</textarea>
-                <input type="hidden" name="file_name" value="{{ file_name }}">
-                <button type="submit">Save Changes</button>
-            </form>
-        {% endif %}
-
-        <!-- Output or success message -->
-        <div id="editing-tools-output">
-            {% if success_message %}
-                <p style="color: green;">{{ success_message }}</p>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-
-      <!-- Collaboration Features -->
-      <div class="feature" id="collaboration-features">
-        <i class="fas fa-share-alt"></i>
-        <div>
-            <h2>Collaboration Features</h2>
-            <form action="/collaboration-features" method="post">
-                <input type="text" name="email" placeholder="Enter email to share with..." required>
-                <button type="submit">Share Transcription</button>
-            </form>
-            <div id="collaboration-features-output">
-                {% if collaboration_features_output %}
-                    <p>{{ collaboration_features_output }}</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-        
-
 
         <!-- Export Options -->
-<div class="feature" id="export-options">
-    <i class="fas fa-file-export"></i>
-    <div>
-        <h2>Export Options</h2>
-        <form action="/export-options" method="post">
-            <textarea name="text" placeholder="Enter text here..." required></textarea>
-            <select name="format">
-                <option value="pdf">PDF</option>
-                <option value="docx">DOCX</option>
-                <option value="txt">TXT</option>
-            </select>
-            <button type="submit">Export Transcription</button>
-        </form>
-        <div id="export-options-output"></div>
-    </div>
-</div>
-
+        <div class="feature" id="export-options">
+            <i class="fas fa-file-export"></i>
+            <div>
+                <h2>Export Options</h2>
+                <form action="/export-options" method="post">
+                    <textarea name="text" placeholder="Enter text here..." required></textarea>
+                    <select name="format">
+                        <option value="pdf">PDF</option>
+                        <option value="docx">DOCX</option>
+                        <option value="txt">TXT</option>
+                    </select>
+                    <button type="submit">Export Transcription</button>
+                </form>
+            </div>
+        </div>
 
         <!-- Privacy and Security -->
-<div class="feature" id="privacy-security">
-    <i class="fas fa-lock"></i>
-    <div>
-        <h2>Privacy and Security</h2>
-        <p>We prioritize your privacy and ensure your data is protected with industry-standard encryption.</p>
-        <form action="/privacy-security" method="post">
-            <textarea name="data" placeholder="Enter data to encrypt..." required></textarea>
-            <input type="checkbox" name="enable-encryption" id="enable-encryption">
-            <label for="enable-encryption">Enable Encryption</label>
-            <button type="submit">Encrypt Data</button>
-        </form>
-        <div id="privacy-security-output">
-            {% if encrypted_data %}
-                <h3>Encrypted Data</h3>
-                <textarea readonly>{{ encrypted_data }}</textarea>
-                <h3>Encryption Key</h3>
-                <textarea readonly>{{ key }}</textarea>
-            {% endif %}
+        <div class="feature" id="privacy-security">
+            <i class="fas fa-lock"></i>
+            <div>
+                <h2>Privacy and Security</h2>
+                <form action="/privacy-security" method="post">
+                    <textarea name="data" placeholder="Enter data to encrypt..." required></textarea>
+                    <button type="submit">Encrypt Data</button>
+                </form>
+                {% if encrypted_data %}
+                    <h3>Encrypted Data</h3>
+                    <textarea readonly>{{ encrypted_data }}</textarea>
+                    <h3>Encryption Key</h3>
+                    <textarea readonly>{{ key }}</textarea>
+                {% endif %}
+            </div>
         </div>
-    </div>
-</div>
 
-<!-- Decrypt Data -->
-<div class="feature" id="decrypt-data">
-    <i class="fas fa-unlock"></i>
-    <div>
-        <h2>Decrypt Data</h2>
-        <form action="/decrypt" method="post">
-            <textarea name="cipher_text" placeholder="Enter encrypted data..." required></textarea>
-            <input type="text" name="key" placeholder="Enter encryption key..." required>
-            <button type="submit">Decrypt Data</button>
-        </form>
-        <div id="decrypt-data-output">
-            {% if decrypted_data %}
-                <h3>Decrypted Data</h3>
-                <textarea readonly>{{ decrypted_data }}</textarea>
-            {% endif %}
+        <!-- Decrypt Data -->
+        <div class="feature" id="decrypt-data">
+            <i class="fas fa-unlock"></i>
+            <div>
+                <h2>Decrypt Data</h2>
+                <form action="/decrypt" method="post">
+                    <textarea name="cipher_text" placeholder="Enter encrypted data..." required></textarea>
+                    <input type="text" name="key" placeholder="Enter encryption key..." required>
+                    <button type="submit">Decrypt Data</button>
+                </form>
+                {% if decrypted_data %}
+                    <h3>Decrypted Data</h3>
+                    <textarea readonly>{{ decrypted_data }}</textarea>
+                {% endif %}
+            </div>
         </div>
-    </div>
-</div>
 
-
-
-       
-<!-- Google Drive Integration -->
+        <!-- Google Drive Integration -->
         <div class="feature" id="google-drive-integration">
             <i class="fas fa-cloud-upload-alt"></i>
             <div>
@@ -452,36 +295,127 @@
                     <input type="file" name="file" required>
                     <button type="submit">Upload to Google Drive</button>
                 </form>
-                <div id="google-drive-output"></div>
             </div>
         </div>
     </div>
 
-
-
-<script>
-    document.getElementById('list-files-btn').onclick = async () => {
-        const response = await fetch('/list-files');
-
-        if (response.ok) {
-            const files = await response.json();
-            const listElement = document.getElementById('uploaded-files-list');
-            listElement.innerHTML = ''; // Clear existing list
-
-            files.forEach(file => {
-                const listItem = document.createElement('li');
-                listItem.textContent = file.name; // Display file name
-                listElement.appendChild(listItem);
-            });
-        } else {
-            alert("Failed to load files.");
-        }
-    };
-</script>
     <footer>
-        <p><b>Dharmendra Prajapati</b> &copy; 2024 Speech Transcription and Translation System</p>
+        <p>&copy; <b>Dharmendra</b> Speech Transcription and Translation System</p>
     </footer>
+
+    <script>
+(() => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn  = document.getElementById('stopBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const transcriptEl = document.getElementById('transcript');
+  const stateEl = document.getElementById('state');
+  const langSelect = document.getElementById('lang');
+
+  if (!SpeechRecognition) {
+    stateEl.textContent = '❌ Web Speech API not supported — use Chrome/Edge.';
+    startBtn.disabled = true;
+    stopBtn.disabled = true;
+    return;
+  }
+
+  let recognition = null;
+  let manualStop = false;
+  let finalTranscript = transcriptEl.value || ''; // Keep across sessions
+
+  function createRecognition() {
+    const r = new SpeechRecognition();
+    r.lang = langSelect.value || 'en-US';
+    r.interimResults = true;
+    r.continuous = true;
+    r.maxAlternatives = 1;
+
+    r.onstart = () => {
+      stateEl.textContent = '🎙️ Listening...';
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+    };
+
+    r.onerror = (e) => {
+      console.error('Recognition error', e);
+      if (e.error === 'not-allowed' || e.error === 'permission-denied')
+        stateEl.textContent = '🚫 Microphone permission denied';
+      else if (e.error === 'network')
+        stateEl.textContent = '🌐 Network error';
+      else
+        stateEl.textContent = '⚠️ Error: ' + e.error;
+    };
+
+    r.onresult = (event) => {
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        const res = event.results[i];
+        if (res.isFinal) {
+          finalTranscript += res[0].transcript + ' ';
+        } else {
+          interim += res[0].transcript;
+        }
+      }
+      transcriptEl.value = (finalTranscript + interim).trim();
+      transcriptEl.scrollTop = transcriptEl.scrollHeight;
+    };
+
+    r.onend = () => {
+      if (manualStop) {
+        stateEl.textContent = '⏹️ Stopped';
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+      } else {
+        stateEl.textContent = '🔄 Restarting...';
+        setTimeout(() => {
+          try {
+            recognition = createRecognition();
+            recognition.start();
+          } catch (err) {
+            stateEl.textContent = '❌ Failed to restart';
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+          }
+        }, 300);
+      }
+    };
+
+    return r;
+  }
+
+  startBtn.addEventListener('click', () => {
+    manualStop = false;
+    recognition = createRecognition();
+    recognition.start();
+    stateEl.textContent = '⏳ Starting...';
+  });
+
+  stopBtn.addEventListener('click', () => {
+    if (!recognition) return;
+    manualStop = true;
+    recognition.stop();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    finalTranscript = '';
+    transcriptEl.value = '';
+    stateEl.textContent = '🗑️ Cleared';
+  });
+
+  langSelect.addEventListener('change', () => {
+    if (recognition && stateEl.textContent.includes('Listening')) {
+      manualStop = false;
+      recognition.stop();
+      setTimeout(() => {
+        recognition = createRecognition();
+        recognition.start();
+      }, 300);
+    }
+  });
+})();
+</script>
+
 
 </body>
 </html>
-
