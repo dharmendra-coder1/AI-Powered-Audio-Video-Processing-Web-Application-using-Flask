@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS uploaded_files (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    task_type VARCHAR(255) NOT NULL,
-    file_name VARCHAR(255) NOT NULL,
-    file_path TEXT NOT NULL,
-    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
